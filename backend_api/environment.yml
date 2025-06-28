@@ -1,0 +1,12 @@
+# backend_api/environment.yml
+name: netflix-backend-env
+channels:
+  - conda-forge
+  - defaults
+dependencies:
+  - python=3.9 # Use a consistent Python version
+  - fastapi
+  - uvicorn
+  - pandas # Add pandas as we'll need it soon for data loading
+  - requests # Needed later to call the model service
+  - pip

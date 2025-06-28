@@ -1,0 +1,18 @@
+# docker-compose.yml (snippet)
+version: '3.8'
+
+services:
+  # --- Backend API ---
+  backend:
+    build:
+      context: ./backend_api # Look for Dockerfile in backend_api directory
+      dockerfile: Dockerfile
+    ports:
+      - "8000:80" # Map host port 8000 to container port 80
+    volumes:
+      # Mount code for easier local development - changes appear without rebuild
+      - ./backend_api:/app
+    # environment: # Add env vars here later if needed
+    #   - ...
+    # depends_on: # We will add this later when connecting services
+    #   - model_service
