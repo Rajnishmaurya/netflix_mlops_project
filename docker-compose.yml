@@ -5,14 +5,52 @@ services:
   # --- Backend API ---
   backend:
     build:
-      context: ./backend_api # Look for Dockerfile in backend_api directory
+      context: ./backend_api
       dockerfile: Dockerfile
     ports:
-      - "8000:80" # Map host port 8000 to container port 80
+      - "8000:80"
     volumes:
-      # Mount code for easier local development - changes appear without rebuild
       - ./backend_api:/app
-    # environment: # Add env vars here later if needed
-    #   - ...
-    # depends_on: # We will add this later when connecting services
+    # depends_on: # Will add this later
     #   - model_service
+    # Add logging driver for better log output (optional)
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "5"
+
+
+  # --- Frontend UI ---
+  frontend:
+    build:
+      context: ./frontend_ui # Look for Dockerfile in frontend_ui directory
+      dockerfile: Dockerfile
+      # Pass the backend URL as a build argument to the Dockerfile
+      args:
+        VITE_BACKEND_API_URL: http://backend:80 # Use the backend service name as hostname and its container port 80
+    ports:
+      - "3000:80" # Map host port 3000 to container port 80 (where Nginx serves)
+    # volumes:
+    #   # Mount code for easier local development? Not always needed/recommended for frontend build stage
+    #   # You might mount only if you need runtime access to certain files.
+    #   # - ./frontend_ui:/app # Careful: might interfere with build stage
+    depends_on:
+      - backend # Frontend depends on the backend being available
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "5"
+
+  # --- Model Inference Service ---
+  # model_service: # Keep commented for now
+
+  # --- MLOps Tools ---
+  # mlflow: # Keep commented
+  # prometheus: # Keep commented
+  # grafana: # Keep commented
+  # airflow: # Keep commented
+
+# volumes: # Keep commented
+#   ...
